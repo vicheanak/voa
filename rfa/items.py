@@ -4,7 +4,7 @@
 import scrapy
 
 
-class ThmeythmeyItem(scrapy.Item):
+class RfaItem(scrapy.Item):
     name = scrapy.Field()
     description = scrapy.Field()
     url = scrapy.Field()

@@ -1,14 +1,14 @@
 
-BOT_NAME = 'thmeythmey'
+BOT_NAME = 'rfa'
 
-SPIDER_MODULES = ['thmeythmey.spiders']
-NEWSPIDER_MODULE = 'thmeythmey.spiders'
+SPIDER_MODULES = ['rfa.spiders']
+NEWSPIDER_MODULE = 'rfa.spiders'
 
 ROBOTSTXT_OBEY = True
 LOG_LEVEL = 'WARNING'
 
 ITEM_PIPELINES = {
-    'thmeythmey.pipelines.MySQLPipeline': 2
+    'rfa.pipelines.MySQLPipeline': 2
 }
 
 DB_HOST = 'localhost'
