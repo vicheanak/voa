@@ -4,7 +4,7 @@
 import scrapy
 
 
-class RfaItem(scrapy.Item):
+class VoaItem(scrapy.Item):
     name = scrapy.Field()
     description = scrapy.Field()
     url = scrapy.Field()
