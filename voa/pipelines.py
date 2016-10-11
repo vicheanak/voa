@@ -36,8 +36,6 @@ class MySQLPipeline(object):
         """ Cleanup function, called after crawing has finished to close open
             objects.
             Close ConnectionPool. """
-        now = time.strftime('%Y-%m-%d %H:%M:%S')
-        print('VOA ==> [' + now + ']');
         self.dbpool.close()
 
     def process_item(self, item, spider):
