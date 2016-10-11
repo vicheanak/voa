@@ -18,7 +18,7 @@ class MySQLPipeline(object):
         return cls(crawler.stats)
 
     def __init__(self, stats):
-        #Instantiate DB
+        #Instantiate DBcd
         self.dbpool = adbapi.ConnectionPool ('MySQLdb',
             host=SETTINGS['DB_HOST'],
             user=SETTINGS['DB_USER'],
@@ -31,12 +31,13 @@ class MySQLPipeline(object):
         )
         self.stats = stats
         dispatcher.connect(self.spider_closed, signals.spider_closed)
-        now = time.strftime('%Y-%m-%d %H:%M:%S')
-        print('KSP =====> [' + now + '] DB Connected')
+
     def spider_closed(self, spider):
         """ Cleanup function, called after crawing has finished to close open
             objects.
             Close ConnectionPool. """
+        now = time.strftime('%Y-%m-%d %H:%M:%S')
+        print('VOA ==> [' + now + ']');
         self.dbpool.close()
 
     def process_item(self, item, spider):
@@ -45,7 +46,7 @@ class MySQLPipeline(object):
 
     def _insert_record(self, tx, item):
         now = time.strftime('%Y-%m-%d %H:%M:%S')
-        website_id = '12'
+        website_id = '4'
         tx.execute("SELECT 1 FROM NewsArticles WHERE url = %s", (item['url'], ))
         ret = tx.fetchone()
         if not ret:
