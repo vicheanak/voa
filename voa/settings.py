@@ -15,5 +15,5 @@ DOWNLOAD_DELAY = 2
 DB_HOST = 'localhost'
 DB_PORT = 3306
 DB_USER = 'root'
-DB_PASSWD = 'tU/x@168rY'
+DB_PASSWD = 'tU/x@268rY'
 DB_DB = 'khmergoo_sequelize'

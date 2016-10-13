@@ -38,13 +38,10 @@ class TestSpider(CrawlSpider):
         else:
             item['description'] = description.extract_first()
 
-        imageUrl = highlight.xpath('a[1]/div[1]/img[1]/@src')
-        if not imageUrl:
-            print('VOA => [' + now + '] No imageUrl')
-        else:
-            item['imageUrl'] = imageUrl.extract_first()
 
-        yield item
+        request = scrapy.Request(item['url'], callback=self.parse_detail)
+        request.meta['item'] = item
+        yield request
 
         followups = hxs.xpath('//ul[@id="ordinaryItems"]/li')
 
@@ -52,8 +49,6 @@ class TestSpider(CrawlSpider):
         for followup in followups:
             item = VoaItem()
             item['categoryId'] = '1'
-
-
 
             name = followup.xpath('div[1]/div[@class="content"]/a[1]/h4[1]/span[1]/text()')
             if not name:
@@ -74,13 +69,9 @@ class TestSpider(CrawlSpider):
             else:
                 item['description'] = description.extract_first()
 
-            imageUrl = followup.xpath('div[1]/a[1]/div[1]/img[1]/@src')
-            if not imageUrl:
-                print('VOA => [' + now + '] No imageUrl')
-            else:
-                item['imageUrl'] = imageUrl.extract_first()
-
-            yield item
+            request = scrapy.Request(item['url'], callback=self.parse_detail)
+            request.meta['item'] = item
+            yield request
 
 
 
@@ -89,18 +80,11 @@ class TestSpider(CrawlSpider):
         hxs = scrapy.Selector(response)
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
-        item_page = hxs.css('div.item-page')
-        description = item_page.xpath('p[1]/text()')
-        if not description:
-            print('ThmeyThmey => [' + now + '] No description')
-        else:
-            item['description'] = item_page.xpath('p[1]/strong/text()').extract_first() + ' ' + description.extract_first()
-
-        imageUrl = item_page.xpath('p[last()]/img/@src')
+        imageUrl = hxs.xpath('//div[@class="thumb listThumb"][1]/img[1]/@src')
         if not imageUrl:
-            print('ThmeyThmey => [' + now + '] No imageUrl')
+            item['imageUrl'] = ''
+            print('VOA => [' + now + '] No ImageUrl')
         else:
             item['imageUrl'] = imageUrl.extract_first()
-
 
         yield item
