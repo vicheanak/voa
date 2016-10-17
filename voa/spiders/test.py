@@ -39,6 +39,7 @@ class TestSpider(CrawlSpider):
             item['description'] = description.extract_first()
 
         imageUrl = highlight.xpath('a[1]/div[1]/img[1]/@src')
+        item['imageUrl'] = ''
         if not imageUrl:
             print('VOA => [' + now + '] No imageUrl')
         else:
