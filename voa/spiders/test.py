@@ -4,6 +4,8 @@ from scrapy.spiders import CrawlSpider, Rule
 from voa.items import VoaItem
 from scrapy.linkextractors import LinkExtractor
 import time
+import lxml.etree
+import lxml.html
 
 
 class TestSpider(CrawlSpider):
@@ -38,6 +40,7 @@ class TestSpider(CrawlSpider):
         else:
             item['description'] = description.extract_first()
 
+<<<<<<< Updated upstream
         imageUrl = highlight.xpath('a[1]/div[1]/img[1]/@src')
         item['imageUrl'] = ''
         if not imageUrl:
@@ -47,9 +50,12 @@ class TestSpider(CrawlSpider):
             imageUrl = imageUrl.split('_', 1)
             imageUrl = imageUrl[0] + '_w987_r1_s.jpg'
             item['imageUrl'] = imageUrl
+=======
+>>>>>>> Stashed changes
 
-
-        yield item
+        request = scrapy.Request(item['url'], callback=self.parse_detail)
+        request.meta['item'] = item
+        yield request
 
         followups = hxs.xpath('//ul[@id="ordinaryItems"]/li')
 
@@ -79,16 +85,10 @@ class TestSpider(CrawlSpider):
             else:
                 item['description'] = description.extract_first()
 
-            imageUrl = followup.xpath('div[1]/a[1]/div[1]/img[1]/@src')
-            if not imageUrl:
-                print('VOA => [' + now + '] No imageUrl')
-            else:
-                imageUrl = imageUrl.extract_first()
-                imageUrl = imageUrl.split('_', 1)
-                imageUrl = imageUrl[0] + '_w987_r1_s.jpg'
-                item['imageUrl'] = imageUrl
 
-            yield item
+            request = scrapy.Request(item['url'], callback=self.parse_detail)
+            request.meta['item'] = item
+            yield request
 
 
 
@@ -97,18 +97,28 @@ class TestSpider(CrawlSpider):
         hxs = scrapy.Selector(response)
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
-        item_page = hxs.css('div.item-page')
-        description = item_page.xpath('p[1]/text()')
-        if not description:
-            print('ThmeyThmey => [' + now + '] No description')
-        else:
-            item['description'] = item_page.xpath('p[1]/strong/text()').extract_first() + ' ' + description.extract_first()
+        root = lxml.html.fromstring(response.body)
+        lxml.etree.strip_elements(root, lxml.etree.Comment, "script", "head")
+        htmlcontent = ''
+        for p in root.xpath('//div[@class="wysiwyg"][1]'):
+            htmlcontent = lxml.html.tostring(p, encoding=unicode)
 
-        imageUrl = item_page.xpath('p[last()]/img/@src')
+        item['htmlcontent'] = htmlcontent
+
+        if not item['htmlcontent']:
+            for pa in root.xpath('//div[@class="intro content-offset"][1]'):
+                htmlcontent = lxml.html.tostring(pa, encoding=unicode)
+                item['htmlcontent'] = htmlcontent
+
+        imageUrl = hxs.xpath('//div[@class="thumb listThumb"]/img[1]/@src')
+        item['imageUrl'] = ''
         if not imageUrl:
-            print('ThmeyThmey => [' + now + '] No imageUrl')
+            print('VOA => [' + now + '] No imageUrl')
         else:
             item['imageUrl'] = imageUrl.extract_first()
+            for m in root.xpath('//div[@class="thumb listThumb"]/img[1]'):
+                img = lxml.html.tostring(m, encoding=unicode)
+                item['htmlcontent'] = img + item['htmlcontent']
 
 
         yield item
