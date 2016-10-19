@@ -40,19 +40,6 @@ class TestSpider(CrawlSpider):
         else:
             item['description'] = description.extract_first()
 
-<<<<<<< Updated upstream
-        imageUrl = highlight.xpath('a[1]/div[1]/img[1]/@src')
-        item['imageUrl'] = ''
-        if not imageUrl:
-            print('VOA => [' + now + '] No imageUrl')
-        else:
-            imageUrl = imageUrl.extract_first()
-            imageUrl = imageUrl.split('_', 1)
-            imageUrl = imageUrl[0] + '_w987_r1_s.jpg'
-            item['imageUrl'] = imageUrl
-=======
->>>>>>> Stashed changes
-
         request = scrapy.Request(item['url'], callback=self.parse_detail)
         request.meta['item'] = item
         yield request
